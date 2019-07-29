@@ -1,4 +1,4 @@
-"""Include Map
+"""C++ Include Graph Generator
 """
 
 import argparse
@@ -11,6 +11,13 @@ from pathlib import Path
 import networkx as nx
 import pyecharts as ec
 import pyecharts.charts as ecc
+
+
+def get_prefix(node: tg.Text) -> tg.Text:
+    if node.endswith('.h') or node.endswith('.cpp'):
+        return node.rsplit('.', maxsplit=1)[0]
+    else:
+        return node
 
 
 def build_graph(path: Path) -> nx.DiGraph:
@@ -67,13 +74,14 @@ def draw_graph(graph: nx.DiGraph, outpath: Path,
         return math.floor(SIZE_FACTOR * math.log1p(graph.degree(node))) + 1
 
     nodes: tg.Sequence[ec.options.GraphNode] = [
-        ec.options.GraphNode(name=node,
+        ec.options.GraphNode(name=get_prefix(node),
                              category=determ_category(node),
                              symbol_size=calc_node_size(graph, node))
         for node in graph.nodes()
     ]
     edges: tg.Sequence[ec.options.GraphLink] = [
-        ec.options.GraphLink(source=edge[0], target=edge[1])
+        ec.options.GraphLink(source=get_prefix(edge[0]),
+                             target=get_prefix(edge[1]))
         for edge in graph.edges()
     ]
     categories: tg.Sequence[ec.options.GraphCategory] = [
@@ -103,9 +111,6 @@ def merge_header(graph: nx.DiGraph) -> nx.DiGraph:
     """Merge .h with same name .cpp
     create new [merged] node as fake "module"
     """
-    def get_prefix(node: tg.Text) -> tg.Text:
-        return node.rsplit('.', maxsplit=1)[0]
-
     can_merge: tg.MutableMapping[tg.Text, bool] = {}
     for node in graph.nodes():
         prefix = get_prefix(node)

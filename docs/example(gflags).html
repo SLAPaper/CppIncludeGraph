@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PyEcharts 图表</title>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+
+</head>
+<body>
+    <div id="52a89d51f35c4dbf8b331b1af60302e4" style="width:100vw; height:100vh;"></div>
+    <script>
+        var chart_52a89d51f35c4dbf8b331b1af60302e4 = echarts.init(
+            document.getElementById('52a89d51f35c4dbf8b331b1af60302e4'), 'white', {renderer: 'canvas'});
+        var option_52a89d51f35c4dbf8b331b1af60302e4 = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
+    ],
+    "series": [
+        {
+            "type": "graph",
+            "layout": "force",
+            "circular": {
+                "rotateLabel": false
+            },
+            "force": {
+                "repulsion": 1000,
+                "edgeLength": 50,
+                "gravity": 0.2
+            },
+            "label": {
+                "show": true,
+                "position": "top",
+                "margin": 8
+            },
+            "lineStyle": {
+                "width": 1,
+                "opacity": 1,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "roam": true,
+            "focusNodeAdjacency": true,
+            "data": [
+                {
+                    "name": "windows_port.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 7
+                },
+                {
+                    "name": "config.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 5
+                },
+                {
+                    "name": "windows.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "direct.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "stdlib.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 5
+                },
+                {
+                    "name": "stdio.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "stdarg.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "[merged]string",
+                    "fixed": false,
+                    "category": 2,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "inttypes.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "defines.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "util.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 8
+                },
+                {
+                    "name": "assert.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 4
+                },
+                {
+                    "name": "iostream",
+                    "fixed": false,
+                    "category": 3,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "errno.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "sys/stat.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "io.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "mutex.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 6
+                },
+                {
+                    "name": "gflags/gflags_declare.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                },
+                {
+                    "name": "pthread.h",
+                    "fixed": false,
+                    "category": 1,
+                    "symbolSize": 3
+                }
+            ],
+            "categories": [
+                {
+                    "name": "cpp"
+                },
+                {
+                    "name": "h"
+                },
+                {
+                    "name": "\"module\""
+                },
+                {
+                    "name": "other"
+                }
+            ],
+            "edgeSymbol": [
+                null,
+                "arrow"
+            ],
+            "edgeSymbolSize": 10,
+            "links": [
+                {
+                    "source": "windows_port.h",
+                    "target": "config.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "windows.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "direct.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "stdlib.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "stdio.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "stdarg.h"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "[merged]string"
+                },
+                {
+                    "source": "windows_port.h",
+                    "target": "inttypes.h"
+                },
+                {
+                    "source": "config.h",
+                    "target": "defines.h"
+                },
+                {
+                    "source": "config.h",
+                    "target": "windows_port.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "config.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "assert.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "inttypes.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "stdarg.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "stdlib.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "stdio.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "iostream"
+                },
+                {
+                    "source": "util.h",
+                    "target": "[merged]string"
+                },
+                {
+                    "source": "util.h",
+                    "target": "errno.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "sys/stat.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "io.h"
+                },
+                {
+                    "source": "util.h",
+                    "target": "direct.h"
+                },
+                {
+                    "source": "mutex.h",
+                    "target": "gflags/gflags_declare.h"
+                },
+                {
+                    "source": "mutex.h",
+                    "target": "windows.h"
+                },
+                {
+                    "source": "mutex.h",
+                    "target": "pthread.h"
+                },
+                {
+                    "source": "mutex.h",
+                    "target": "assert.h"
+                },
+                {
+                    "source": "mutex.h",
+                    "target": "stdlib.h"
+                }
+            ]
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "cpp",
+                "h",
+                "\"module\"",
+                "other"
+            ],
+            "selected": {
+                "cpp": true,
+                "h": true,
+                "\"module\"": true,
+                "other": true
+            },
+            "show": true
+        }
+    ],
+    "tooltip": {
+        "show": false,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0
+    },
+    "title": [
+        {
+            "text": "C++\u4f9d\u8d56\u5173\u7cfb\u56fe"
+        }
+    ]
+};
+        chart_52a89d51f35c4dbf8b331b1af60302e4.setOption(option_52a89d51f35c4dbf8b331b1af60302e4);
+    </script>
+</body>
+</html>

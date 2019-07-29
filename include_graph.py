@@ -43,7 +43,7 @@ def draw_graph(graph: nx.DiGraph, outpath: Path,
                repulsion: int = 1000) -> None:
     """Use PyEcharts to draw the graph to html
     """
-    CATEGORYLIST = ('cpp', 'h', 'other')
+    CATEGORYLIST = ('cpp', 'h', '"module"', 'other')
 
     def determ_category(node: tg.Text) -> int:
         """Defer node by there name
@@ -53,14 +53,18 @@ def draw_graph(graph: nx.DiGraph, outpath: Path,
             return 0
         if node.endswith('h'):
             return 1
-        return 2
+        if node.startswith('[merged]'):
+            return 2
+        return 3
 
     def calc_node_size(graph: nx.DiGraph, node: tg.Text) -> int:
         """Size nodes by their degree.
         Use natrual log to make them less diversed
-        multiply by a factor to make them not too small
+        multiply by SIZE_FACTOR to make them not too small
+        plus 1 so that size won't be zero
         """
-        return math.floor(3 * math.log1p(graph.degree(node))) + 1
+        SIZE_FACTOR = 3
+        return math.floor(SIZE_FACTOR * math.log1p(graph.degree(node))) + 1
 
     nodes: tg.Sequence[ec.options.GraphNode] = [
         ec.options.GraphNode(name=node,
@@ -95,6 +99,37 @@ def draw_graph(graph: nx.DiGraph, outpath: Path,
         chart.render(outpath)
 
 
+def merge_header(graph: nx.DiGraph) -> nx.DiGraph:
+    """Merge .h with same name .cpp
+    create new [merged] node as fake "module"
+    """
+    def get_prefix(node: tg.Text) -> tg.Text:
+        return node.rsplit('.', maxsplit=1)[0]
+
+    can_merge: tg.MutableMapping[tg.Text, bool] = {}
+    for node in graph.nodes():
+        prefix = get_prefix(node)
+        if prefix in can_merge:
+            can_merge[prefix] = True
+        else:
+            can_merge[prefix] = False
+
+    result = nx.DiGraph()
+    for edge in graph.edges():
+        prefix0 = get_prefix(edge[0])
+        prefix1 = get_prefix(edge[1])
+        if can_merge[prefix0] or can_merge[prefix1]:
+            new_edge = [edge[0], edge[1]]
+            if can_merge[prefix0]:
+                new_edge[0] = '[merged]' + prefix0
+            if can_merge[prefix1]:
+                new_edge[1] = '[merged]' + prefix1
+            result.add_edge(*new_edge)
+        else:
+            result.add_edge(*edge)
+    return result
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Iterate through a folder and draw include graph")
@@ -114,14 +149,26 @@ if __name__ == "__main__":
                         default=1000,
                         help=('Repulsion argument in force layout, '
                               'which control how far nodes repel each other.'))
+    parser.add_argument('--nomerge',
+                        action='store_false',
+                        help=('disable merging same name .h and .cpp'))
+
     args = parser.parse_args()
 
     path: Path = args.path
     include_graph = build_graph(path)
     if args.all:
-        draw_graph(include_graph, args.out, args.forcerepulsion)
+        if args.nomerge is False:
+            draw_graph(include_graph, args.out, args.forcerepulsion)
+        else:
+            draw_graph(merge_header(include_graph), args.out,
+                       args.forcerepulsion)
     else:
         main_subgraph = include_graph.subgraph(
             chain([args.entryfile],
                   nx.descendants(include_graph, args.entryfile)))
-        draw_graph(main_subgraph, args.out, args.forcerepulsion)
+        if args.nomerge is False:
+            draw_graph(main_subgraph, args.out, args.forcerepulsion)
+        else:
+            draw_graph(merge_header(main_subgraph), args.out,
+                       args.forcerepulsion)

@@ -2,6 +2,12 @@
 
 A Python Script that generates all h and cpp file include relationship graph
 
+## Requirements
+
+- Python 3.7+ (lower may work but not tested)
+- NetworkX latest version: convinient network manimulation
+- PyEcharts latest version: visualization
+
 ## Usage
 
     usage: include_graph.py [-h] [--out OUT] [--entryfile ENTRYFILE] [--all]

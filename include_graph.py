@@ -30,24 +30,28 @@ def build_graph(path: Path) -> nx.DiGraph:
             try:
                 for line in f:
                     if re.match(r'#\s*(include|INCLUDE)',
-                                line.strip()) is not None:
-                        match = re.search('[<"](?P<include>.+)[">]',
-                                          line.strip())
-                        if match is None:
-                            continue
-                        included_file = match.group('include')
-                        if included_file:
-                            include_graph.add_edge(
-                                str(srcfile.relative_to(path)),
-                                str(included_file))
+                                line.strip()) is None:
+                        continue
+
+                    match = re.search('[<"](?P<include>.+)[">]', line.strip())
+                    if match is None:
+                        continue
+
+                    included_file = match.group('include')
+                    if not included_file:
+                        continue
+                    include_graph.add_edge(str(srcfile.relative_to(path)),
+                                           str(included_file))
             except UnicodeDecodeError:
                 # some actual file use non-unicode encoding, skip
                 pass
     return include_graph
 
 
-def draw_graph(graph: nx.DiGraph, outpath: Path,
-               repulsion: int = 1000) -> None:
+def draw_graph(graph: nx.DiGraph,
+               outpath: Path,
+               repulsion: int = 1000,
+               show_suffix: bool = False) -> None:
     """Use PyEcharts to draw the graph to html
     """
     CATEGORYLIST = ('cpp', 'h', '"module"', 'other')
@@ -73,15 +77,21 @@ def draw_graph(graph: nx.DiGraph, outpath: Path,
         SIZE_FACTOR = 3
         return math.floor(SIZE_FACTOR * math.log1p(graph.degree(node))) + 1
 
+    def get_node_name(node: tg.Text, show_suffix: bool) -> tg.Text:
+        if show_suffix:
+            return node
+        else:
+            return get_prefix(node)
+
     nodes: tg.Sequence[ec.options.GraphNode] = [
-        ec.options.GraphNode(name=get_prefix(node),
+        ec.options.GraphNode(name=get_node_name(node, show_suffix),
                              category=determ_category(node),
                              symbol_size=calc_node_size(graph, node))
         for node in graph.nodes()
     ]
     edges: tg.Sequence[ec.options.GraphLink] = [
-        ec.options.GraphLink(source=get_prefix(edge[0]),
-                             target=get_prefix(edge[1]))
+        ec.options.GraphLink(source=get_node_name(edge[0], show_suffix),
+                             target=get_node_name(edge[1], show_suffix))
         for edge in graph.edges()
     ]
     categories: tg.Sequence[ec.options.GraphCategory] = [
@@ -123,15 +133,12 @@ def merge_header(graph: nx.DiGraph) -> nx.DiGraph:
     for edge in graph.edges():
         prefix0 = get_prefix(edge[0])
         prefix1 = get_prefix(edge[1])
-        if can_merge[prefix0] or can_merge[prefix1]:
-            new_edge = [edge[0], edge[1]]
-            if can_merge[prefix0]:
-                new_edge[0] = '[merged]' + prefix0
-            if can_merge[prefix1]:
-                new_edge[1] = '[merged]' + prefix1
-            result.add_edge(*new_edge)
-        else:
-            result.add_edge(*edge)
+        new_edge = [edge[0], edge[1]]
+        if can_merge[prefix0]:
+            new_edge[0] = '[merged]' + prefix0
+        if can_merge[prefix1]:
+            new_edge[1] = '[merged]' + prefix1
+        result.add_edge(*new_edge)
     return result
 
 
@@ -157,23 +164,25 @@ if __name__ == "__main__":
     parser.add_argument('--nomerge',
                         action='store_false',
                         help=('disable merging same name .h and .cpp'))
+    parser.add_argument('--showsuffix',
+                        action='store_true',
+                        help=('show file suffix'))
 
     args = parser.parse_args()
 
     path: Path = args.path
     include_graph = build_graph(path)
+
     if args.all:
-        if args.nomerge is False:
-            draw_graph(include_graph, args.out, args.forcerepulsion)
-        else:
-            draw_graph(merge_header(include_graph), args.out,
-                       args.forcerepulsion)
+        temp_g = include_graph
     else:
-        main_subgraph = include_graph.subgraph(
+        temp_g = include_graph.subgraph(
             chain([args.entryfile],
                   nx.descendants(include_graph, args.entryfile)))
-        if args.nomerge is False:
-            draw_graph(main_subgraph, args.out, args.forcerepulsion)
-        else:
-            draw_graph(merge_header(main_subgraph), args.out,
-                       args.forcerepulsion)
+
+    if args.nomerge is False:
+        target_graph = temp_g
+    else:
+        target_graph = merge_header(temp_g)
+
+    draw_graph(target_graph, args.out, args.forcerepulsion, args.showsuffix)

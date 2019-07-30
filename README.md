@@ -12,6 +12,7 @@ A Python Script that generates all h and cpp file include relationship graph
 
     usage: include_graph.py [-h] [--out OUT] [--entryfile ENTRYFILE] [--all]
                             [--forcerepulsion FORCEREPULSION] [--nomerge]
+                            [--showsuffix]
                             path
 
     Iterate through a folder and draw include graph
@@ -30,6 +31,7 @@ A Python Script that generates all h and cpp file include relationship graph
                             Repulsion argument in force layout, which control how
                             far nodes repel each other.
     --nomerge             disable merging same name .h and .cpp
+    --showsuffix          show file suffix
 
 ## Example
 

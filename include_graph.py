@@ -24,27 +24,31 @@ def build_graph(path: Path) -> nx.DiGraph:
     """Search for cpp and h file,
     find lines include "include" and take the included file to build network
     """
+    def process_line(graph: nx.DiGraph, stripped_line: tg.Text, srcfile: Path,
+                     root: Path) -> None:
+        if re.match(r'#\s*(include|INCLUDE)', stripped_line) is None:
+            return
+
+        match = re.search('[<"](?P<include>.+)[">]', stripped_line)
+        if match is None:
+            return
+
+        included_file = match.group('include')
+        if not included_file:
+            return
+
+        graph.add_edge(str(srcfile.relative_to(root)), str(included_file))
+
     include_graph = nx.DiGraph()
     for srcfile in chain(path.rglob('*.cpp'), path.rglob('*.h')):
         with srcfile.open('r') as f:
             try:
                 for line in f:
-                    if re.match(r'#\s*(include|INCLUDE)',
-                                line.strip()) is None:
-                        continue
-
-                    match = re.search('[<"](?P<include>.+)[">]', line.strip())
-                    if match is None:
-                        continue
-
-                    included_file = match.group('include')
-                    if not included_file:
-                        continue
-                    include_graph.add_edge(str(srcfile.relative_to(path)),
-                                           str(included_file))
+                    process_line(include_graph, line.strip(), srcfile, path)
             except UnicodeDecodeError:
                 # some actual file use non-unicode encoding, skip
                 pass
+
     return include_graph
 
 

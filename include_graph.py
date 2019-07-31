@@ -14,10 +14,14 @@ import pyecharts.charts as ecc
 
 
 def get_prefix(node: tg.Text) -> tg.Text:
-    if node.endswith('.h') or node.endswith('.hpp') or node.endswith('.cpp'):
-        return node.rsplit('.', maxsplit=1)[0]
-    else:
+    if '.' not in node:
         return node
+
+    prefix, suffix = node.rsplit('.', maxsplit=1)
+    if suffix in ('h', 'hpp', 'cpp'):
+        return prefix
+
+    return node
 
 
 def build_graph(path: Path) -> nx.DiGraph:
@@ -52,9 +56,7 @@ def build_graph(path: Path) -> nx.DiGraph:
     return include_graph
 
 
-def draw_graph(graph: nx.DiGraph,
-               outpath: Path,
-               repulsion,
+def draw_graph(graph: nx.DiGraph, outpath: Path, repulsion,
                show_suffix) -> None:
     """Use PyEcharts to draw the graph to html
     """

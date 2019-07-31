@@ -14,7 +14,7 @@ import pyecharts.charts as ecc
 
 
 def get_prefix(node: tg.Text) -> tg.Text:
-    if node.endswith('.h') or node.endswith('.cpp'):
+    if node.endswith('.h') or node.endswith('.hpp') or node.endswith('.cpp'):
         return node.rsplit('.', maxsplit=1)[0]
     else:
         return node
@@ -54,22 +54,22 @@ def build_graph(path: Path) -> nx.DiGraph:
 
 def draw_graph(graph: nx.DiGraph,
                outpath: Path,
-               repulsion: int = 1000,
-               show_suffix: bool = False) -> None:
+               repulsion,
+               show_suffix) -> None:
     """Use PyEcharts to draw the graph to html
     """
-    CATEGORYLIST = ('cpp', 'h', '"module"', 'other')
+    CATEGORYLIST = ('source', 'header', '"module"', 'other')
 
     def determ_category(node: tg.Text) -> int:
         """Defer node by there name
         Should be consisdent with CATEGORYLIST
         """
-        if node.endswith('cpp'):
-            return 0
-        if node.endswith('h'):
-            return 1
         if node.startswith('[merged]'):
             return 2
+        if node.endswith('cpp'):
+            return 0
+        if node.endswith('h') or node.endswith('hpp'):
+            return 1
         return 3
 
     def calc_node_size(graph: nx.DiGraph, node: tg.Text) -> int:
